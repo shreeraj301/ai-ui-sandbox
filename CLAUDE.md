@@ -1,6 +1,6 @@
 # Working on AI UI Sandbox
 
-Read first: `docs/PROGRESS.md` (current state), `docs/ARCHITECTURE.md` (document model), `docs/ROADMAP.md` (phase gates). The full requirements are in `PRD/`, which is kept local and git-ignored.
+Read first: `docs/PROGRESS.md` (current state), `docs/ARCHITECTURE.md` (document model), `docs/ROADMAP.md` (phase gates), `docs/DESIGN.md` (editor look). The full requirements are in `PRD/`, which is kept local and git-ignored.
 
 ## Rules
 
@@ -10,6 +10,7 @@ Read first: `docs/PROGRESS.md` (current state), `docs/ARCHITECTURE.md` (document
 - Imported files, stored records and AI output are untrusted. Run them through `parseProject` or `applyOperations`, which validate the schema and the structure.
 - Never use `eval`, `new Function` or unsafe HTML injection. ESLint blocks the first two.
 - No placeholder or decorative controls. If a control is on screen, it works.
+- Editor chrome uses tokens from `src/styles/editor-tokens.css` only, following `docs/DESIGN.md`. Chrome tokens never style the user's components on the stage.
 - Never invent research, metrics, quotes or test results. Record only what was observed.
 - Do not push to GitHub or deploy without the owner's explicit permission.
 

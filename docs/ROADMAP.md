@@ -37,7 +37,7 @@ Each ends with a screenshot or preview for the owner, and the principles-and-law
 
 ## Parallel work
 
-- Visual identity directions: decide before Phase 1 sub-milestone 1 builds the editor chrome.
+- Visual identity: decided 2026-11-04, Direction A, dark first (see `docs/DESIGN.md`).
 - Interviews: any time; findings may change Phase 1 scope.
 
 ## Open decisions

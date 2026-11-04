@@ -2,6 +2,18 @@
 
 Newest first.
 
+## 2026-11-04: Editor identity is Direction A, Drawing Set, dark first
+
+The owner chose A from three live directions ([decision page](https://claude.ai/artifact/3pPzhcBeMotH5ndW9pecaF)), with the blueprint dark theme as the default. Reasons: it is the only direction that could not pass for another editor, its drawing devices carry real information, and it reflects the owner's architecture training. Full rules in [DESIGN.md](DESIGN.md). Known risk: the saturated dark ground needs a long-session test in Phase 1.
+
+## 2026-11-04: Self-host the editor font
+
+Archivo is installed from `@fontsource-variable/archivo` and bundled, instead of loading from Google Fonts. The app makes no third-party requests during normal use, which matches the privacy promise.
+
+## 2026-11-04: No design-drift lock
+
+The `design-drift` plugin locks a project to one of its bundled brand systems. Our identity is custom, so it does not apply. `docs/DESIGN.md` and the tokens file act as the lock instead, and UI reviews check against them.
+
 ## 2026-11-04: Pin TypeScript to 6.0.x
 
 TypeScript 7.0.2 is the latest release, but typescript-eslint 8.72.1 supports TypeScript below 6.1. Pinning 6.0.3 keeps type-aware linting working. Revisit when typescript-eslint supports 7.

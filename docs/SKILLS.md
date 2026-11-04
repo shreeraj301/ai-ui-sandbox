@@ -18,7 +18,7 @@ Which installed skills to use, and when. Grouped by the work they serve.
 | `emil-design-eng`, `audit-ai-design-slop`, `uxkin:no-ui-slop`, `vectorlab-ux-skills:anti-slop`                                     | Keep the editor away from the generic AI look                                                                                                                               |
 | `color-system`, `dark-mode-design`, `typography-scale`, `critique-typography`, `spacing-system`, `layout-grid`, `visual-hierarchy` | Build the editor's own token set                                                                                                                                            |
 | Mobbin search                                                                                                                      | Real references, linked for review, never saved to the account                                                                                                              |
-| `design-drift:lock` then `design-drift:check`                                                                                      | Once a direction is chosen, lock it so later work cannot drift                                                                                                              |
+| `docs/DESIGN.md`                                                                                                                   | The lock for our custom identity. `design-drift` only locks its bundled brands, so it does not apply here                                                                   |
 
 ## Phase 1 editor
 

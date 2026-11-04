@@ -1,0 +1,56 @@
+/*
+ * Editor identity: Direction A, "Drawing Set". Dark (blueprint) is the default;
+ * light (bond paper) applies with data-theme="light" on <html>.
+ * These tokens style the editor chrome only. A user's design system on the
+ * stage never reads them. Rules for using them: docs/DESIGN.md.
+ */
+:root {
+  color-scheme: dark;
+
+  /* Blueprint (default) */
+  --ed-stage: #0e2747;
+  --ed-panel: #11305a;
+  --ed-raised: #173a68;
+  --ed-field: #0e2747;
+  --ed-line: #2e5486;
+  --ed-grid: #1a3b66;
+  --ed-ink: #e9f0fa;
+  --ed-muted: #a9bcd6;
+  --ed-action: #e9f0fa;
+  --ed-on-action: #0e2747;
+  --ed-markup: #f2c14e;
+  --ed-on-markup: #1b1a10;
+  --ed-ok: #7fd1a0;
+
+  /* Type: one family, the width axis carries the hierarchy */
+  --ed-font: 'Archivo Variable', 'Arial Narrow', system-ui, sans-serif;
+  --ed-stretch-label: 112%;
+  --ed-stretch-title: 118%;
+  --ed-fs-label: 11px;
+  --ed-fs-body: 13px;
+  --ed-fs-title: 20px;
+
+  /* Shape and rhythm */
+  --ed-radius: 2px;
+  --ed-row: 30px;
+  --ed-grid-step: 40px;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  /* Bond paper */
+  --ed-stage: #edefec;
+  --ed-panel: #f7f8f5;
+  --ed-raised: #e7eae5;
+  --ed-field: #ffffff;
+  --ed-line: #c9cec8;
+  --ed-grid: #dce0da;
+  --ed-ink: #1b2024;
+  --ed-muted: #5b636a;
+  --ed-action: #1b2024;
+  --ed-on-action: #f7f8f5;
+  --ed-markup: #1f4e9c;
+  --ed-on-markup: #ffffff;
+  --ed-ok: #2f7d4f;
+}
