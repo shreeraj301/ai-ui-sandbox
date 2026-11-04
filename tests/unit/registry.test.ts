@@ -3,13 +3,23 @@ import { createProject } from '../../src/document/project';
 import { checkOperations, checkProps, componentList } from '../../src/registry/registry';
 
 describe('component registry', () => {
-  it('has five components whose defaults pass their own schema', () => {
+  it('has the 15 Phase 1 components, whose defaults pass their own schema', () => {
     expect(componentList.map((definition) => definition.type)).toEqual([
       'text',
       'button',
+      'icon-button',
       'badge',
+      'divider',
       'text-input',
+      'textarea',
+      'select',
+      'checkbox',
+      'switch',
       'card',
+      'avatar',
+      'image',
+      'alert',
+      'progress',
     ]);
     for (const definition of componentList) {
       expect(checkProps(definition.type, definition.defaults)).toEqual({ ok: true });

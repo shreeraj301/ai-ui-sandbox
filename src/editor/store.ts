@@ -3,6 +3,7 @@ import { applyOperations, type Operation } from '../document/operations';
 import { createId } from '../document/project';
 import type { Page, Project } from '../document/schema';
 import { checkOperations, getDefinition } from '../registry/registry';
+import type { StateId } from '../registry/types';
 
 export type SaveStatus =
   | { state: 'idle' }
@@ -26,6 +27,9 @@ type EditorState = {
   /** Versions undone, available to redo, newest last. */
   future: Project[];
   lastChange: { key: string; at: number } | null;
+  /** A state forced on one component for preview. Editor-only: never saved or undone. */
+  preview: { nodeId: string; state: StateId } | null;
+  setPreview: (preview: { nodeId: string; state: StateId } | null) => void;
   /** Replace the open project (after loading). Clears the selection and history. */
   load: (project: Project) => void;
   /**
@@ -63,8 +67,12 @@ export const useEditor = create<EditorState>()((set, get) => ({
   past: [],
   future: [],
   lastChange: null,
+  preview: null,
 
-  load: (project) => set({ project, selectedId: null, past: [], future: [], lastChange: null }),
+  load: (project) =>
+    set({ project, selectedId: null, past: [], future: [], lastChange: null, preview: null }),
+
+  setPreview: (preview) => set({ preview }),
 
   apply: (operations, coalesceKey) => {
     const { project, past, lastChange } = get();
@@ -99,6 +107,7 @@ export const useEditor = create<EditorState>()((set, get) => ({
       future: [...future, project],
       lastChange: null,
       selectedId: keepSelection(restored, selectedId),
+      preview: keepSelection(restored, selectedId) ? get().preview : null,
     });
   },
 
@@ -113,10 +122,15 @@ export const useEditor = create<EditorState>()((set, get) => ({
       future: future.slice(0, -1),
       lastChange: null,
       selectedId: keepSelection(restored, selectedId),
+      preview: keepSelection(restored, selectedId) ? get().preview : null,
     });
   },
 
-  select: (nodeId) => set({ selectedId: nodeId }),
+  select: (nodeId) =>
+    set((state) => ({
+      selectedId: nodeId,
+      preview: state.preview && state.preview.nodeId === nodeId ? state.preview : null,
+    })),
 
   setSave: (save) => set({ save }),
 
@@ -140,7 +154,7 @@ export const useEditor = create<EditorState>()((set, get) => ({
         },
       },
     ]);
-    if (result.ok) set({ selectedId: id });
+    if (result.ok) set({ selectedId: id, preview: null });
     return result;
   },
 
@@ -157,7 +171,7 @@ export const useEditor = create<EditorState>()((set, get) => ({
     const { project, apply, selectedId } = get();
     if (!project) return { ok: false, error: 'No project is open' };
     const result = apply([{ type: 'removeNode', pageId: project.activePageId, nodeId }]);
-    if (result.ok && selectedId === nodeId) set({ selectedId: null });
+    if (result.ok && selectedId === nodeId) set({ selectedId: null, preview: null });
     return result;
   },
 }));

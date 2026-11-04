@@ -26,8 +26,8 @@ The app starts locally, passes typecheck and lint, the unit tests pass, and the 
 
 Each ends with a screenshot or preview for the owner, and the principles-and-laws audit for UI work.
 
-1. **Thin slice (built 2026-11-04, in review):** create project, add a component, select it, edit a property, stage updates, save locally, reload and restore. First 5 components.
-2. **All 15 components and their states.**
+1. **Thin slice (done 2026-11-04):** create project, add a component, select it, edit a property, stage updates, save locally, reload and restore. First 5 components.
+2. **All 15 components and their states (built 2026-11-04, in review).**
 3. **Token editor:** colour, type, spacing, radius, elevation; contrast shown; DTCG JSON and CSS variable export.
 4. **Viewports:** desktop, tablet, mobile with real reflow.
 5. **Projects:** list, rename, delete, import and export backups, honest save status.

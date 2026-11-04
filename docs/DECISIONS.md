@@ -2,6 +2,18 @@
 
 Newest first.
 
+## 2026-11-04: Image takes an https address for now
+
+Owner's choice. Only `https://` addresses pass the schema, images load with `referrerPolicy="no-referrer"`, and a failed load shows a clear state. Uploading files into the project comes with import and export in sub-milestone 5.
+
+## 2026-11-04: Lucide icons, from a fixed list of 16
+
+Button and icon button pick from a fixed set, so the prop schema can reject any other name and the bundle stays small.
+
+## 2026-11-04: State previews are editor state, not document state
+
+The States tab forces a state with a `data-state` attribute that the component CSS treats like the real pseudo-class. The preview lives in the editor store only: it is never saved, never undone and clears when the selection changes. States that matter to the design (a loading button, an error message) are real props.
+
 ## 2026-11-04: Zustand for editor state, Dexie for IndexedDB
 
 Zustand holds the open project, selection, save status and undo history in one small store; every project change still goes through `applyOperations`. Dexie wraps IndexedDB with transactions and schema versions. Both are small, maintained and pinned.

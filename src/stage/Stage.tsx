@@ -2,6 +2,7 @@ import { useCallback, useLayoutEffect, useRef, useState, type CSSProperties } fr
 import type { DocumentNode } from '../document/schema';
 import { activePage, useEditor } from '../editor/store';
 import { getDefinition } from '../registry/registry';
+import { STATE_LABELS, type StateId } from '../registry/types';
 import { FRAME_WIDTH } from './constants';
 import { TitleBlock } from './TitleBlock';
 
@@ -17,6 +18,7 @@ type Box = { left: number; top: number; width: number; height: number };
 export function Stage({ userVars }: { userVars: CSSProperties }) {
   const project = useEditor((state) => state.project);
   const selectedId = useEditor((state) => state.selectedId);
+  const preview = useEditor((state) => state.preview);
   const select = useEditor((state) => state.select);
 
   const layerRef = useRef<HTMLDivElement>(null);
@@ -63,7 +65,7 @@ export function Stage({ userVars }: { userVars: CSSProperties }) {
 
   useLayoutEffect(() => {
     measureSelection();
-  }, [measureSelection, project]);
+  }, [measureSelection, project, preview]);
 
   // Bring a newly selected component into view, for example one just added at the end.
   useLayoutEffect(() => {
@@ -71,7 +73,17 @@ export function Stage({ userVars }: { userVars: CSSProperties }) {
     const wrapper = Array.from(
       layerRef.current?.querySelectorAll<HTMLElement>('[data-node-id]') ?? [],
     ).find((element) => element.dataset.nodeId === selectedId);
-    wrapper?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
+    const viewport = layerRef.current?.parentElement;
+    if (!wrapper || !viewport) return;
+    // Scroll vertically only: wide components must not shift the stage sideways.
+    const view = viewport.getBoundingClientRect();
+    const rect = wrapper.getBoundingClientRect();
+    const margin = 48;
+    if (rect.top < view.top + margin) {
+      viewport.scrollBy({ top: rect.top - (view.top + margin) });
+    } else if (rect.bottom > view.bottom - margin) {
+      viewport.scrollBy({ top: rect.bottom - (view.bottom - margin) });
+    }
   }, [selectedId]);
 
   useLayoutEffect(() => {
@@ -119,13 +131,22 @@ export function Stage({ userVars }: { userVars: CSSProperties }) {
                     key={node.id}
                     node={node}
                     selected={node.id === selectedId}
+                    state={preview?.nodeId === node.id ? preview.state : 'default'}
                     onSelect={() => select(node.id)}
                   />
                 ))
               )}
             </div>
           </div>
-          {box ? <Selection box={box} zoom={zoom} /> : null}
+          {box ? (
+            <Selection
+              box={box}
+              zoom={zoom}
+              stateLabel={
+                preview && preview.nodeId === selectedId ? STATE_LABELS[preview.state] : null
+              }
+            />
+          ) : null}
         </div>
       </div>
       <TitleBlock zoom={zoom} />
@@ -136,16 +157,18 @@ export function Stage({ userVars }: { userVars: CSSProperties }) {
 function StageNode({
   node,
   selected,
+  state,
   onSelect,
 }: {
   node: DocumentNode;
   selected: boolean;
+  state: StateId;
   onSelect: () => void;
 }) {
   const definition = getDefinition(node.type);
   if (!definition) return null;
   const { Render } = definition;
-  const stretch = node.type === 'button' && node.props.fullWidth === true;
+  const stretch = definition.stretch?.(node.props) ?? false;
   return (
     <div
       className="stage-node"
@@ -168,13 +191,21 @@ function StageNode({
     >
       {/* The user's component is shown, not operated, while editing. */}
       <div className="stage-node__content" inert>
-        <Render props={node.props} />
+        <Render props={node.props} state={state} />
       </div>
     </div>
   );
 }
 
-function Selection({ box, zoom }: { box: Box; zoom: number }) {
+function Selection({
+  box,
+  zoom,
+  stateLabel,
+}: {
+  box: Box;
+  zoom: number;
+  stateLabel: string | null;
+}) {
   const width = Math.round(box.width / zoom);
   const height = Math.round(box.height / zoom);
   return (
@@ -193,6 +224,9 @@ function Selection({ box, zoom }: { box: Box; zoom: number }) {
           {height}
         </span>
       </span>
+      {stateLabel ? (
+        <span className="selection__state">Showing {stateLabel.toLowerCase()}</span>
+      ) : null}
       <span className="handle handle--tl" />
       <span className="handle handle--tr" />
       <span className="handle handle--bl" />

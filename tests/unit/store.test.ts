@@ -88,3 +88,24 @@ describe('undo and redo', () => {
     expect(useEditor.getState().selectedId).toBeNull();
   });
 });
+
+describe('state preview', () => {
+  it('holds a state for the selected component and clears on selection change', () => {
+    useEditor.getState().addComponent('button');
+    const id = useEditor.getState().selectedId!;
+    useEditor.getState().setPreview({ nodeId: id, state: 'hover' });
+    useEditor.getState().select(id);
+    expect(useEditor.getState().preview).toEqual({ nodeId: id, state: 'hover' });
+    useEditor.getState().select(null);
+    expect(useEditor.getState().preview).toBeNull();
+  });
+
+  it('is never part of the project or its history', () => {
+    useEditor.getState().addComponent('button');
+    const id = useEditor.getState().selectedId!;
+    const before = useEditor.getState().project;
+    useEditor.getState().setPreview({ nodeId: id, state: 'pressed' });
+    expect(useEditor.getState().project).toBe(before);
+    expect(useEditor.getState().past).toHaveLength(1);
+  });
+});

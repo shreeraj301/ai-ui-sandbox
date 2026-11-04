@@ -10,6 +10,9 @@ describe('App', () => {
     ).toBeInTheDocument();
     expect(await screen.findByRole('heading', { name: 'Library' })).toBeInTheDocument();
     expect(screen.getByRole('main', { name: 'Stage' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Properties' })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Properties' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
   });
 });

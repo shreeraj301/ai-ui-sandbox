@@ -139,7 +139,7 @@ export function App() {
       </p>
       <Library userVars={userVars} />
       <Stage userVars={userVars} />
-      <Inspector />
+      <Inspector userVars={userVars} />
     </div>
   );
 }

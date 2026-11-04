@@ -3,17 +3,41 @@ import type { z } from 'zod';
 
 export type Category = 'Foundations' | 'Forms' | 'Content';
 
+/** Interaction and feedback states a component can be previewed in. */
+export const STATE_IDS = [
+  'default',
+  'hover',
+  'focus',
+  'pressed',
+  'disabled',
+  'loading',
+  'error',
+  'success',
+] as const;
+export type StateId = (typeof STATE_IDS)[number];
+
+export const STATE_LABELS: Record<StateId, string> = {
+  default: 'Default',
+  hover: 'Hover',
+  focus: 'Focus',
+  pressed: 'Pressed',
+  disabled: 'Disabled',
+  loading: 'Loading',
+  error: 'Error',
+  success: 'Success',
+};
+
+type FieldBase = { key: string; label: string; group: string; hint?: string };
+
 /** One editable property as the inspector shows it. */
 export type Field =
-  | { key: string; label: string; group: string; kind: 'text'; multiline?: boolean }
-  | {
-      key: string;
-      label: string;
-      group: string;
-      kind: 'choice';
-      options: { value: string; label: string }[];
-    }
-  | { key: string; label: string; group: string; kind: 'toggle' };
+  | (FieldBase & { kind: 'text'; multiline?: boolean })
+  | (FieldBase & { kind: 'number'; min: number; max: number; step?: number; unit?: string })
+  | (FieldBase & { kind: 'choice'; options: { value: string; label: string }[] })
+  | (FieldBase & { kind: 'select'; options: { value: string; label: string }[] })
+  | (FieldBase & { kind: 'toggle' });
+
+export type RenderProps = { props: Record<string, unknown>; state?: StateId };
 
 /**
  * Everything the editor knows about a component type. The schema is the
@@ -28,6 +52,10 @@ export type ComponentDefinition = {
   schema: z.ZodType<Record<string, unknown>>;
   defaults: Record<string, unknown>;
   fields: Field[];
+  /** States worth previewing for this component. Always starts with 'default'. */
+  states: StateId[];
+  /** Whether the component fills the page width with these props. */
+  stretch?: (props: Record<string, unknown>) => boolean;
   /** Renders the component with the user's design tokens (CSS variables --u-*). */
-  Render: ComponentType<{ props: Record<string, unknown> }>;
+  Render: ComponentType<RenderProps>;
 };
