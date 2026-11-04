@@ -4,7 +4,7 @@ Last updated: 2026-11-04
 
 ## Current state
 
-Phase 0 is built and in review with the owner. Nothing has been pushed to GitHub yet.
+Phase 0 is complete. The owner approved it and it was pushed to `main` on 2026-11-04. Phase 1 has not started.
 
 ## Verified
 
@@ -28,6 +28,5 @@ Verified on the owner's Windows machine (Node 24, Chromium via Playwright 1.64.1
 
 ## Next
 
-1. Owner reviews Phase 0 and approves the first push.
-2. Visual identity directions, in parallel.
-3. Phase 1, sub-milestone 1: the thin slice.
+1. Visual identity directions for the editor (2 or 3, for the owner to choose).
+2. Phase 1, sub-milestone 1: the thin slice, after the owner's OK.

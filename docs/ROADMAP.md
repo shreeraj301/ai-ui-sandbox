@@ -4,7 +4,7 @@ Each phase ends at an acceptance gate. The next phase starts only after the gate
 
 | Phase | Goal                                           | Status      |
 | ----- | ---------------------------------------------- | ----------- |
-| 0     | Foundation: stack, docs, document model, shell | In review   |
+| 0     | Foundation: stack, docs, document model, shell | Done        |
 | 1     | Component playground: first usable release     | Not started |
 | 2     | Composition and layout                         | Not started |
 | 3     | Reusable components and variants               | Not started |
