@@ -62,6 +62,8 @@ export const projectSchema = z.object({
   schemaVersion: z.literal(CURRENT_SCHEMA_VERSION),
   createdAt: isoDate,
   updatedAt: isoDate,
+  /** Count of applied change transactions. Shown as the revision in the title block. */
+  revision: z.number().int().min(0),
   pages: z.array(pageSchema).min(1),
   activePageId: id,
   designSystems: z.array(designSystemSchema).min(1),

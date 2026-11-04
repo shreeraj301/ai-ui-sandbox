@@ -1,0 +1,196 @@
+/*
+ * The user's components. They read only the user's design tokens (--u-*),
+ * never the editor's (--ed-*), so a user's system renders as they defined it.
+ */
+
+.uc-text {
+  margin: 0;
+  max-width: 720px;
+  color: var(--u-color-text);
+  font-family: var(--u-font-family);
+  font-size: var(--u-font-size-body);
+  line-height: 1.5;
+}
+
+.uc-text[data-variant='heading'] {
+  font-size: var(--u-font-size-heading);
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.uc-text[data-variant='caption'] {
+  font-size: var(--u-font-size-caption);
+  color: var(--u-color-text-muted);
+}
+
+.uc-text[data-align='center'] {
+  text-align: center;
+}
+
+.uc-text[data-align='end'] {
+  text-align: end;
+}
+
+.uc-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--u-space-2);
+  height: 40px;
+  padding: 0 var(--u-space-5);
+  border: 1px solid transparent;
+  border-radius: var(--u-radius-md);
+  font-family: var(--u-font-family);
+  font-size: var(--u-font-size-body);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.uc-button[data-size='sm'] {
+  height: 32px;
+  padding: 0 var(--u-space-3);
+  font-size: var(--u-font-size-caption);
+}
+
+.uc-button[data-size='lg'] {
+  height: 48px;
+  padding: 0 var(--u-space-6);
+  font-size: 16px;
+}
+
+.uc-button[data-variant='primary'] {
+  background: var(--u-color-brand);
+  color: var(--u-color-on-brand);
+}
+
+.uc-button[data-variant='primary']:hover:not(:disabled) {
+  background: var(--u-color-brand-strong);
+}
+
+.uc-button[data-variant='secondary'] {
+  background: var(--u-color-surface);
+  color: var(--u-color-text);
+  border-color: var(--u-color-border);
+}
+
+.uc-button[data-variant='ghost'] {
+  background: transparent;
+  color: var(--u-color-brand);
+}
+
+.uc-button:disabled {
+  background: var(--u-color-neutral-subtle);
+  color: var(--u-color-text-muted);
+  border-color: transparent;
+  cursor: not-allowed;
+}
+
+.uc-button[data-full] {
+  width: 100%;
+}
+
+.uc-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: var(--u-radius-full);
+  font-family: var(--u-font-family);
+  font-size: var(--u-font-size-caption);
+  font-weight: 600;
+  line-height: 18px;
+  background: var(--u-color-neutral-subtle);
+  color: var(--u-color-text);
+}
+
+.uc-badge[data-tone='brand'] {
+  background: var(--u-color-brand-subtle);
+  color: var(--u-color-brand-subtle-text);
+}
+
+.uc-badge[data-tone='success'] {
+  background: var(--u-color-success-subtle);
+  color: var(--u-color-success);
+}
+
+.uc-badge[data-tone='danger'] {
+  background: var(--u-color-danger-subtle);
+  color: var(--u-color-danger);
+}
+
+.uc-field {
+  display: grid;
+  gap: 6px;
+  width: 320px;
+  font-family: var(--u-font-family);
+  color: var(--u-color-text);
+}
+
+.uc-field__label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.uc-field__input {
+  height: 40px;
+  padding: 0 var(--u-space-3);
+  border: 1px solid var(--u-color-border);
+  border-radius: var(--u-radius-md);
+  background: var(--u-color-surface);
+  color: var(--u-color-text);
+  font: inherit;
+  font-size: var(--u-font-size-body);
+}
+
+.uc-field__input::placeholder {
+  color: var(--u-color-text-muted);
+}
+
+.uc-field__input:disabled {
+  background: var(--u-color-neutral-subtle);
+}
+
+.uc-field[data-error] .uc-field__input {
+  border-color: var(--u-color-danger);
+}
+
+.uc-field__help,
+.uc-field__error {
+  font-size: var(--u-font-size-caption);
+  color: var(--u-color-text-muted);
+}
+
+.uc-field__error {
+  color: var(--u-color-danger);
+}
+
+.uc-card {
+  width: 400px;
+  padding: var(--u-space-6);
+  border: 1px solid var(--u-color-border);
+  border-radius: var(--u-radius-lg);
+  background: var(--u-color-surface);
+  font-family: var(--u-font-family);
+}
+
+.uc-card[data-padding='sm'] {
+  padding: var(--u-space-4);
+}
+
+.uc-card[data-padding='lg'] {
+  padding: var(--u-space-8);
+}
+
+.uc-card__title {
+  margin: 0 0 var(--u-space-2);
+  font-size: 18px;
+  font-weight: 650;
+  color: var(--u-color-text);
+}
+
+.uc-card__body {
+  margin: 0;
+  font-size: var(--u-font-size-body);
+  line-height: 1.5;
+  color: var(--u-color-text-muted);
+}

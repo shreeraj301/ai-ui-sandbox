@@ -1,3 +1,4 @@
+import { defaultTokens } from '../design-system/defaultTokens';
 import { CURRENT_SCHEMA_VERSION, projectSchema, type Project } from './schema';
 import { findStructuralProblems } from './validate';
 
@@ -5,7 +6,7 @@ export function createId(): string {
   return crypto.randomUUID();
 }
 
-/** A new project with one empty page and one blank design system. */
+/** A new project with one empty page and the starter design system. */
 export function createProject(name = 'Untitled playground', now = new Date()): Project {
   const pageId = createId();
   const designSystemId = createId();
@@ -16,9 +17,12 @@ export function createProject(name = 'Untitled playground', now = new Date()): P
     schemaVersion: CURRENT_SCHEMA_VERSION,
     createdAt: timestamp,
     updatedAt: timestamp,
+    revision: 0,
     pages: [{ id: pageId, name: 'Page 1', rootNodeIds: [], nodes: {} }],
     activePageId: pageId,
-    designSystems: [{ id: designSystemId, name: 'Design system', tokens: {} }],
+    designSystems: [
+      { id: designSystemId, name: 'Starter system', tokens: structuredClone(defaultTokens) },
+    ],
     activeDesignSystemId: designSystemId,
   };
 }

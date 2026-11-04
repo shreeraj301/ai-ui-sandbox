@@ -2,6 +2,18 @@
 
 Newest first.
 
+## 2026-11-04: Zustand for editor state, Dexie for IndexedDB
+
+Zustand holds the open project, selection, save status and undo history in one small store; every project change still goes through `applyOperations`. Dexie wraps IndexedDB with transactions and schema versions. Both are small, maintained and pinned.
+
+## 2026-11-04: Undo and redo in sub-milestone 1
+
+The principles-and-laws audit rated an unrecoverable delete as a major problem (NN/g heuristic 3, severity 3). Because projects are immutable snapshots, history is a list of earlier projects (up to 100). Quick edits to the same field undo as one step.
+
+## 2026-11-04: Stage at 100% until viewports arrive
+
+Fitting the 1440px frame into a laptop stage shrank components to about 50%, too small to judge. The stage shows the frame at 100% and scrolls sideways. Zoom returns with viewport switching in sub-milestone 4.
+
 ## 2026-11-04: Editor identity is Direction A, Drawing Set, dark first
 
 The owner chose A from three live directions ([decision page](https://claude.ai/artifact/3pPzhcBeMotH5ndW9pecaF)), with the blueprint dark theme as the default. Reasons: it is the only direction that could not pass for another editor, its drawing devices carry real information, and it reflects the owner's architecture training. Full rules in [DESIGN.md](DESIGN.md). Known risk: the saturated dark ground needs a long-session test in Phase 1.

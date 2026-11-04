@@ -2,9 +2,14 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { App } from '../../src/app/App';
 
-describe('App shell', () => {
-  it('renders the product name as the page heading', () => {
+describe('App', () => {
+  it('opens a playground with the library, stage and inspector', async () => {
     render(<App />);
-    expect(screen.getByRole('heading', { level: 1, name: 'AI UI Sandbox' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'AI UI Sandbox' }),
+    ).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Library' })).toBeInTheDocument();
+    expect(screen.getByRole('main', { name: 'Stage' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Properties' })).toBeInTheDocument();
   });
 });

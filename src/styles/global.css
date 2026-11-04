@@ -1,6 +1,8 @@
 /* Base styles for the editor chrome. All colours and type come from editor-tokens.css. */
 @import '@fontsource-variable/archivo/wdth.css';
 @import './editor-tokens.css';
+@import './editor.css';
+@import '../registry/components.css';
 
 *,
 *::before,
@@ -8,13 +10,15 @@
   box-sizing: border-box;
 }
 
+html,
+body,
+#root {
+  height: 100%;
+}
+
 body {
   margin: 0;
   background-color: var(--ed-stage);
-  background-image:
-    linear-gradient(var(--ed-grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--ed-grid) 1px, transparent 1px);
-  background-size: var(--ed-grid-step) var(--ed-grid-step);
   color: var(--ed-ink);
   font-family: var(--ed-font);
   font-size: var(--ed-fs-body);
@@ -27,25 +31,41 @@ body {
   outline-offset: 2px;
 }
 
-.shell {
-  min-height: 100dvh;
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.boot {
+  min-height: 100%;
   display: grid;
   place-content: center;
   gap: 8px;
-  padding: 24px;
   text-align: center;
 }
 
-.shell__title {
+.boot__title {
   margin: 0;
   font-size: 2rem;
   font-weight: 700;
   font-stretch: var(--ed-stretch-title);
-  letter-spacing: 0.01em;
 }
 
-.shell__status {
+.boot__status {
   margin: 0;
   color: var(--ed-muted);
-  font-size: 1rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

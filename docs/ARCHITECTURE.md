@@ -51,13 +51,22 @@ Later phases add layout and style properties, component definitions, interaction
 - **Structure:** every child reference exists, each node has exactly one parent link that agrees both ways, every node is reachable from the page roots, no cycles, active ids point at real items.
 - **Versioning:** `parseProject` rejects documents newer than the app and will run migrations for older ones.
 
+## Built in Phase 1
+
+| Area               | Where                 | Notes                                                                                                                                                                               |
+| ------------------ | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Component registry | `src/registry/`       | 5 components. Each has a strict zod prop schema, defaults, inspector fields and a renderer. `checkOperations` rejects unknown types and invalid props before `applyOperations` runs |
+| Editor store       | `src/editor/store.ts` | Zustand: project, selection, save status, undo and redo history                                                                                                                     |
+| User tokens        | `src/design-system/`  | Starter DTCG tokens, resolved to `--u-*` CSS variables on the frame. Unsafe names and values are dropped                                                                            |
+| Persistence        | `src/persistence/`    | Dexie on IndexedDB. Stored projects are validated with `parseProject` on load. Autosave writes 400 ms after the last change and on tab hide                                         |
+| Stage              | `src/stage/`          | One desktop frame at 100%, measured selection with dimension lines, title block                                                                                                     |
+
 ## Not built yet
 
-| Area                                                | Phase               |
-| --------------------------------------------------- | ------------------- |
-| Component registry (types, prop schemas, renderers) | 1                   |
-| Editor state store, selection                       | 1                   |
-| IndexedDB persistence and autosave                  | 1                   |
-| Token resolution and editor                         | 1                   |
-| Undo history                                        | 1 (basic), 8 (full) |
-| AI provider layer                                   | 12                  |
+| Area                                      | Phase |
+| ----------------------------------------- | ----- |
+| Token editor                              | 1     |
+| Viewports and zoom                        | 1     |
+| Project list, import and export           | 1     |
+| Full history (grouped drags, checkpoints) | 8     |
+| AI provider layer                         | 12    |
