@@ -1,0 +1,58 @@
+/*
+ * Phase 0 base styles only. The editor's visual identity is still being
+ * explored, so these are neutral placeholders, not design decisions.
+ */
+:root {
+  color-scheme: light dark;
+  --shell-bg: #f6f5f2;
+  --shell-text: #1b1b19;
+  --shell-muted: #5c5b56;
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  line-height: 1.5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --shell-bg: #161614;
+    --shell-text: #ecebe6;
+    --shell-muted: #a8a69f;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--shell-bg);
+  color: var(--shell-text);
+}
+
+.shell {
+  min-height: 100dvh;
+  display: grid;
+  place-content: center;
+  gap: 8px;
+  padding: 24px;
+  text-align: center;
+}
+
+.shell__title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.shell__status {
+  margin: 0;
+  color: var(--shell-muted);
+}
