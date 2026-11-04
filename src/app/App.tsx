@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import { tokensToCssVariables } from '../design-system/resolve';
 import { createProject } from '../document/project';
 import { Inspector } from '../editor/Inspector';
-import { Library } from '../editor/Library';
+import { Sidebar } from '../editor/Sidebar';
 import { useEditor } from '../editor/store';
 import { startAutosave } from '../persistence/autosave';
 import { openLastOrCreate } from '../persistence/database';
@@ -137,7 +137,7 @@ export function App() {
         Editing needs a screen at least 900px wide. You can look at the page here; open it on a
         larger screen to add and edit components.
       </p>
-      <Library userVars={userVars} />
+      <Sidebar userVars={userVars} />
       <Stage userVars={userVars} />
       <Inspector userVars={userVars} />
     </div>

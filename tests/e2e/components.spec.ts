@@ -11,7 +11,7 @@ test('each new component can be added and edited', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'Library' })).toBeVisible();
+  await expect(page.getByRole('tab', { name: 'Components' })).toBeVisible();
   const label = () => page.getByLabel('Label', { exact: true });
 
   const iconButton = await add(page, 'Icon button');

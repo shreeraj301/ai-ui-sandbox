@@ -145,6 +145,7 @@ export const cardSchema = z
     title: text(1, 80),
     body: text(0, 400),
     padding: size,
+    elevation: z.enum(['none', 'sm', 'md', 'lg']),
   })
   .strict();
 

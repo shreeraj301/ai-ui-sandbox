@@ -5,6 +5,7 @@ import { useEditor } from './store';
 
 const categories: Category[] = ['Foundations', 'Forms', 'Content'];
 
+/** The component list in the Components tab of the sidebar. */
 export function Library({ userVars }: { userVars: CSSProperties }) {
   const [query, setQuery] = useState('');
   const addComponent = useEditor((state) => state.addComponent);
@@ -20,10 +21,7 @@ export function Library({ userVars }: { userVars: CSSProperties }) {
   }, [query]);
 
   return (
-    <aside className="panel library" aria-labelledby="library-title">
-      <h2 className="panel__title" id="library-title">
-        Library
-      </h2>
+    <>
       <div className="search">
         <label className="visually-hidden" htmlFor="library-search">
           Search components
@@ -73,6 +71,6 @@ export function Library({ userVars }: { userVars: CSSProperties }) {
           );
         })
       )}
-    </aside>
+    </>
   );
 }

@@ -1,7 +1,9 @@
 import { create } from 'zustand';
 import { applyOperations, type Operation } from '../document/operations';
+import { getToken, TOKEN_SPECS } from '../design-system/catalogue';
+import { defaultTokens } from '../design-system/defaultTokens';
 import { createId } from '../document/project';
-import type { Page, Project } from '../document/schema';
+import type { DesignSystem, Page, Project } from '../document/schema';
 import { checkOperations, getDefinition } from '../registry/registry';
 import type { StateId } from '../registry/types';
 
@@ -21,6 +23,8 @@ const COALESCE_MS = 1500;
 type EditorState = {
   project: Project | null;
   selectedId: string | null;
+  /** Dotted path of the token open in the inspector. Never set together with selectedId. */
+  selectedToken: string | null;
   save: SaveStatus;
   /** Earlier versions of the project, newest last. */
   past: Project[];
@@ -39,11 +43,16 @@ type EditorState = {
   apply: (operations: Operation[], coalesceKey?: string) => ChangeResult;
   undo: () => void;
   redo: () => void;
+  /** Select a component on the stage. Null clears every selection, tokens included. */
   select: (nodeId: string | null) => void;
+  selectToken: (path: string | null) => void;
   setSave: (status: SaveStatus) => void;
   addComponent: (type: string) => ChangeResult;
   updateProps: (nodeId: string, props: Record<string, unknown>) => ChangeResult;
   removeNode: (nodeId: string) => ChangeResult;
+  updateToken: (path: string, value: unknown) => ChangeResult;
+  /** Put tokens back to their starter values as one undoable step. All editable tokens if no paths. */
+  resetTokens: (paths?: string[]) => ChangeResult;
 };
 
 function stamp(): string {
@@ -60,9 +69,18 @@ export function activePage(project: Project): Page {
   return page;
 }
 
+export function activeDesignSystem(project: Project): DesignSystem {
+  const system = project.designSystems.find(
+    (candidate) => candidate.id === project.activeDesignSystemId,
+  );
+  if (!system) throw new Error('Active design system missing');
+  return system;
+}
+
 export const useEditor = create<EditorState>()((set, get) => ({
   project: null,
   selectedId: null,
+  selectedToken: null,
   save: { state: 'idle' },
   past: [],
   future: [],
@@ -70,7 +88,15 @@ export const useEditor = create<EditorState>()((set, get) => ({
   preview: null,
 
   load: (project) =>
-    set({ project, selectedId: null, past: [], future: [], lastChange: null, preview: null }),
+    set({
+      project,
+      selectedId: null,
+      selectedToken: null,
+      past: [],
+      future: [],
+      lastChange: null,
+      preview: null,
+    }),
 
   setPreview: (preview) => set({ preview }),
 
@@ -129,8 +155,11 @@ export const useEditor = create<EditorState>()((set, get) => ({
   select: (nodeId) =>
     set((state) => ({
       selectedId: nodeId,
+      selectedToken: null,
       preview: state.preview && state.preview.nodeId === nodeId ? state.preview : null,
     })),
+
+  selectToken: (path) => set({ selectedToken: path, selectedId: null, preview: null }),
 
   setSave: (save) => set({ save }),
 
@@ -154,7 +183,7 @@ export const useEditor = create<EditorState>()((set, get) => ({
         },
       },
     ]);
-    if (result.ok) set({ selectedId: id, preview: null });
+    if (result.ok) set({ selectedId: id, selectedToken: null, preview: null });
     return result;
   },
 
@@ -174,4 +203,34 @@ export const useEditor = create<EditorState>()((set, get) => ({
     if (result.ok && selectedId === nodeId) set({ selectedId: null, preview: null });
     return result;
   },
+
+  updateToken: (path, value) => {
+    const { project, apply } = get();
+    if (!project) return { ok: false, error: 'No project is open' };
+    return apply(
+      [{ type: 'updateToken', designSystemId: project.activeDesignSystemId, path, value }],
+      `token:${path}`,
+    );
+  },
+
+  resetTokens: (paths) => {
+    const { project, apply } = get();
+    if (!project) return { ok: false, error: 'No project is open' };
+    const system = activeDesignSystem(project);
+    const operations = (paths ?? TOKEN_SPECS.map((spec) => spec.path)).flatMap((path) => {
+      const starter = getToken(defaultTokens, path);
+      const current = getToken(system.tokens, path);
+      if (!starter || !current || isSameValue(starter.$value, current.$value)) return [];
+      return [
+        { type: 'updateToken' as const, designSystemId: system.id, path, value: starter.$value },
+      ];
+    });
+    if (operations.length === 0) return { ok: true };
+    return apply(operations);
+  },
 }));
+
+/** Token values are plain JSON, so comparing their JSON is enough. */
+export function isSameValue(a: unknown, b: unknown): boolean {
+  return JSON.stringify(a) === JSON.stringify(b);
+}

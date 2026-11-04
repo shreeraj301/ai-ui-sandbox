@@ -8,7 +8,10 @@ describe('App', () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: 'AI UI Sandbox' }),
     ).toBeInTheDocument();
-    expect(await screen.findByRole('heading', { name: 'Library' })).toBeInTheDocument();
+    expect(await screen.findByRole('tab', { name: 'Components' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
     expect(screen.getByRole('main', { name: 'Stage' })).toBeInTheDocument();
     expect(screen.getByRole('tab', { name: 'Properties' })).toHaveAttribute(
       'aria-selected',

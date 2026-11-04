@@ -7,7 +7,7 @@ import { z } from 'zod';
  * Bump CURRENT_SCHEMA_VERSION when the shape changes, and add a migration in
  * `project.ts` that upgrades the previous version.
  */
-export const CURRENT_SCHEMA_VERSION = 1;
+export const CURRENT_SCHEMA_VERSION = 2;
 
 const id = z.string().min(1).max(64);
 const name = z.string().min(1).max(120);
@@ -15,8 +15,9 @@ const isoDate = z.iso.datetime();
 
 /**
  * A design token in the W3C DTCG 2025.10 format: `$value` plus an optional
- * `$type` and `$description`. Values stay `unknown` here; Phase 1 adds typed
- * validation per token type when the token editor exists.
+ * `$type` and `$description`. Values stay `unknown` here so imported files
+ * can carry types this app does not edit; updateToken checks the value
+ * against its type (design-system/tokenValues.ts) before storing it.
  */
 export const tokenSchema = z.object({
   $value: z.unknown(),

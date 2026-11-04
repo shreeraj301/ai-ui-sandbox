@@ -1,3 +1,4 @@
+import { checkTokenChange } from '../design-system/catalogue';
 import type { Operation } from '../document/operations';
 import type { Project } from '../document/schema';
 import { definitions } from './definitions';
@@ -26,11 +27,16 @@ export function checkProps(type: string, props: Record<string, unknown>): PropsC
 
 /**
  * Registry rules the document layer does not know about: component types must
- * exist and props must match their schema. Run before applyOperations.
+ * exist, props must match their schema, and token edits must stay inside the
+ * editable catalogue and its ranges. Run before applyOperations.
  */
 export function checkOperations(project: Project, operations: Operation[]): PropsCheck {
   const merged = new Map<string, { type: string; props: Record<string, unknown> }>();
   for (const operation of operations) {
+    if (operation.type === 'updateToken') {
+      const error = checkTokenChange(operation.path, operation.value);
+      if (error) return { ok: false, error };
+    }
     if (operation.type === 'addNode') {
       const check = checkProps(operation.node.type, operation.node.props);
       if (!check.ok) return check;

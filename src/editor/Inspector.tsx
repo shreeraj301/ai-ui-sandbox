@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
+import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import type { DocumentNode } from '../document/schema';
 import { getDefinition } from '../registry/registry';
 import {
@@ -8,6 +8,8 @@ import {
   type StateId,
 } from '../registry/types';
 import { activePage, useEditor } from './store';
+import { Tabs } from './Tabs';
+import { TokenEditor } from './TokenEditor';
 
 type Tab = 'properties' | 'states';
 
@@ -16,11 +18,29 @@ export function Inspector({ userVars }: { userVars: CSSProperties }) {
   const selectedId = useEditor((state) => state.selectedId);
   const node = project && selectedId ? activePage(project).nodes[selectedId] : undefined;
   const definition = node ? getDefinition(node.type) : undefined;
+  const selectedToken = useEditor((state) => state.selectedToken);
   const [tab, setTab] = useState<Tab>('properties');
+
+  if (selectedToken) {
+    return (
+      <aside className="panel inspector" aria-labelledby="inspector-token-title">
+        <h2 className="panel__title" id="inspector-token-title">
+          Token
+        </h2>
+        <TokenEditor key={selectedToken} path={selectedToken} />
+      </aside>
+    );
+  }
 
   return (
     <aside className="panel inspector" aria-label="Inspector">
-      <Tabs tab={tab} onChange={setTab} />
+      <Tabs
+        idPrefix="inspector"
+        label="Inspector sections"
+        tabs={TABS}
+        value={tab}
+        onChange={setTab}
+      />
       {node && definition ? (
         <div
           role="tabpanel"
@@ -53,37 +73,6 @@ const TABS: { id: Tab; label: string }[] = [
   { id: 'properties', label: 'Properties' },
   { id: 'states', label: 'States' },
 ];
-
-function Tabs({ tab, onChange }: { tab: Tab; onChange: (tab: Tab) => void }) {
-  const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
-    if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
-    const index = TABS.findIndex((item) => item.id === tab);
-    const next = TABS[(index + (event.key === 'ArrowRight' ? 1 : TABS.length - 1)) % TABS.length];
-    if (!next) return;
-    onChange(next.id);
-    document.getElementById(`inspector-tab-${next.id}`)?.focus();
-  };
-  return (
-    <div className="tabs" role="tablist" aria-label="Inspector sections">
-      {TABS.map((item) => (
-        <button
-          key={item.id}
-          type="button"
-          role="tab"
-          id={`inspector-tab-${item.id}`}
-          aria-selected={tab === item.id}
-          aria-controls={`inspector-panel-${item.id}`}
-          tabIndex={tab === item.id ? 0 : -1}
-          className="tabs__tab"
-          onClick={() => onChange(item.id)}
-          onKeyDown={onKeyDown}
-        >
-          {item.label}
-        </button>
-      ))}
-    </div>
-  );
-}
 
 function PropertiesPanel({
   node,
@@ -192,21 +181,29 @@ function FieldControl({ node, field }: { node: DocumentNode; field: Field }) {
 
   if (field.kind === 'choice') {
     return (
-      <div className="prop" role="radiogroup" aria-labelledby={`${id}-label`}>
+      <div
+        className="prop"
+        role="radiogroup"
+        aria-labelledby={`${id}-label`}
+        aria-describedby={hintId}
+      >
         <span id={`${id}-label`}>{field.label}</span>
-        <div className="seg">
-          {field.options.map((choice) => (
-            <label key={choice.value} className="seg__option">
-              <input
-                type="radio"
-                name={id}
-                value={choice.value}
-                checked={value === choice.value}
-                onChange={() => updateProps(node.id, { [field.key]: choice.value })}
-              />
-              <span>{choice.label}</span>
-            </label>
-          ))}
+        <div className="prop__control">
+          <div className="seg">
+            {field.options.map((choice) => (
+              <label key={choice.value} className="seg__option">
+                <input
+                  type="radio"
+                  name={id}
+                  value={choice.value}
+                  checked={value === choice.value}
+                  onChange={() => updateProps(node.id, { [field.key]: choice.value })}
+                />
+                <span>{choice.label}</span>
+              </label>
+            ))}
+          </div>
+          {hint}
         </div>
       </div>
     );

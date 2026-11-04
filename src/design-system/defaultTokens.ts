@@ -1,23 +1,29 @@
 import type { TokenGroup } from '../document/schema';
+import { colorValue, px as pxValue } from './tokenValues';
 
-const color = (hex: string, description?: string) => {
-  const n = parseInt(hex.slice(1), 16);
-  const components = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(
-    (c) => Math.round((c / 255) * 1000) / 1000,
-  );
-  return {
-    $type: 'color',
-    $value: { colorSpace: 'srgb', components, hex: hex.toLowerCase() },
-    ...(description ? { $description: description } : {}),
-  };
-};
+const color = (hex: string, description?: string) => ({
+  $type: 'color',
+  $value: colorValue(hex),
+  ...(description ? { $description: description } : {}),
+});
 
-const px = (value: number) => ({ $type: 'dimension', $value: { value, unit: 'px' } });
+const px = (value: number) => ({ $type: 'dimension', $value: pxValue(value) });
+
+const shadow = (y: number, blur: number, spread: number, alpha: number) => ({
+  $type: 'shadow',
+  $value: {
+    color: colorValue('#1c1a1d', alpha),
+    offsetX: pxValue(0),
+    offsetY: pxValue(y),
+    blur: pxValue(blur),
+    spread: pxValue(spread),
+  },
+});
 
 /**
  * The starter design system every new project begins with, in W3C DTCG
  * 2025.10 format. This is the user's system, not the editor's: it styles only
- * the components on the stage. Phase 1 sub-milestone 3 makes it editable.
+ * the components on the stage. The token editor changes it through updateToken.
  */
 export const defaultTokens: TokenGroup = {
   color: {
@@ -50,5 +56,18 @@ export const defaultTokens: TokenGroup = {
       $value: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
     },
     size: { caption: px(12), body: px(14), heading: px(20) },
+    weight: {
+      strong: { $type: 'fontWeight', $value: 600 },
+      heading: { $type: 'fontWeight', $value: 650 },
+    },
+    'line-height': {
+      body: { $type: 'number', $value: 1.5 },
+      heading: { $type: 'number', $value: 1.25 },
+    },
+  },
+  shadow: {
+    sm: shadow(1, 2, 0, 0.08),
+    md: shadow(4, 12, -2, 0.12),
+    lg: shadow(12, 32, -8, 0.18),
   },
 };

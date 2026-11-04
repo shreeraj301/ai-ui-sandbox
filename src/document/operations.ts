@@ -1,4 +1,11 @@
-import { projectSchema, type DocumentNode, type Page, type Project } from './schema';
+import { checkTokenValue } from '../design-system/tokenValues';
+import {
+  projectSchema,
+  type DocumentNode,
+  type Page,
+  type Project,
+  type TokenGroup,
+} from './schema';
 import { findStructuralProblems } from './validate';
 
 /**
@@ -18,7 +25,15 @@ export type Operation =
   | { type: 'removeNode'; pageId: string; nodeId: string }
   | { type: 'moveNode'; pageId: string; nodeId: string; parentId: string | null; index: number }
   | { type: 'updateNodeProps'; pageId: string; nodeId: string; props: Record<string, unknown> }
-  | { type: 'renameNode'; pageId: string; nodeId: string; name: string };
+  | { type: 'renameNode'; pageId: string; nodeId: string; name: string }
+  | {
+      type: 'updateToken';
+      designSystemId: string;
+      /** Dotted DTCG path to an existing token, e.g. "color.brand". */
+      path: string;
+      /** The new $value. Its shape must match the token's $type. */
+      value: unknown;
+    };
 
 export type ApplyResult = { ok: true; project: Project } | { ok: false; error: string };
 
@@ -46,6 +61,7 @@ export function applyOperations(project: Project, operations: Operation[]): Appl
 
 /** Mutates the draft. Returns an error message, or null on success. */
 function applyOne(draft: Project, operation: Operation): string | null {
+  if (operation.type === 'updateToken') return updateToken(draft, operation);
   const page = draft.pages.find((candidate) => candidate.id === operation.pageId);
   if (!page) return `page "${operation.pageId}" not found`;
 
@@ -97,6 +113,30 @@ function applyOne(draft: Project, operation: Operation): string | null {
       return null;
     }
   }
+}
+
+function updateToken(
+  draft: Project,
+  operation: Extract<Operation, { type: 'updateToken' }>,
+): string | null {
+  const system = draft.designSystems.find((candidate) => candidate.id === operation.designSystemId);
+  if (!system) return `design system "${operation.designSystemId}" not found`;
+  let node: TokenGroup | undefined = system.tokens;
+  const keys = operation.path.split('.');
+  for (const key of keys.slice(0, -1)) {
+    const next: unknown = node && Object.hasOwn(node, key) ? node[key] : undefined;
+    node =
+      typeof next === 'object' && next !== null && !('$value' in next)
+        ? (next as TokenGroup)
+        : undefined;
+  }
+  const last = keys.at(-1) ?? '';
+  const token = node && Object.hasOwn(node, last) ? node[last] : undefined;
+  if (!token || !('$value' in token)) return `token "${operation.path}" not found`;
+  const problem = checkTokenValue(token.$type as string | undefined, operation.value);
+  if (problem) return `token "${operation.path}": ${problem}`;
+  token.$value = structuredClone(operation.value);
+  return null;
 }
 
 /** The ordered child list a node lives in: the page roots, or a parent's children. */

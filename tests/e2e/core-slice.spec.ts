@@ -5,7 +5,7 @@ test('add a button, edit it, reload and find it unchanged', async ({ page }) => 
   page.on('pageerror', (error) => errors.push(error.message));
 
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'Library' })).toBeVisible();
+  await expect(page.getByRole('tab', { name: 'Components' })).toBeVisible();
   await expect(page.getByText('This page is empty.', { exact: false })).toBeVisible();
 
   // Add a button from the library: it lands on the stage, selected.

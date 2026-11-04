@@ -2,6 +2,18 @@
 
 Newest first.
 
+## 2026-11-04: Token editor edits a fixed catalogue
+
+The token editor changes values only, for the 40 tokens the components read (`src/design-system/catalogue.ts`). Adding, renaming and deleting tokens waits for Phase 5, because component styles depend on the exact names. Two starter tokens no component reads, `color.neutral` and `space.1`, stay in the file and the exports but are not listed in the editor.
+
+## 2026-11-04: Font family from system stacks only
+
+The font picker offers six stacks of fonts already on people's devices (adapted from modernfontstacks.com). Loading a web font would mean a request to a font server, which breaks the no-third-party-requests promise. A free text field was rejected because it only renders where that font is installed.
+
+## 2026-11-04: Contrast warns, never blocks
+
+Sixteen colour pairs the components really draw are checked against WCAG 2.2: 4.5:1 for text, 3:1 for control edges. A failing pair is flagged with an icon and text, not a second accent colour, and the edit still applies. Ratios round down for display so a failing pair never reads as passing.
+
 ## 2026-11-04: Image takes an https address for now
 
 Owner's choice. Only `https://` addresses pass the schema, images load with `referrerPolicy="no-referrer"`, and a failed load shows a clear state. Uploading files into the project comes with import and export in sub-milestone 5.

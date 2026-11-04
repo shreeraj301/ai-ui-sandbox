@@ -1,5 +1,5 @@
 import { defaultTokens } from '../design-system/defaultTokens';
-import { CURRENT_SCHEMA_VERSION, projectSchema, type Project } from './schema';
+import { CURRENT_SCHEMA_VERSION, projectSchema, type Project, type TokenGroup } from './schema';
 import { findStructuralProblems } from './validate';
 
 export function createId(): string {
@@ -51,8 +51,9 @@ export function parseProject(input: unknown): ParseResult {
 }
 
 /**
- * Upgrade older documents to CURRENT_SCHEMA_VERSION. Version 1 is the first,
- * so there is nothing to upgrade yet; add one step per future version here.
+ * Upgrade older documents to CURRENT_SCHEMA_VERSION, one version at a time.
+ * Each step works on untrusted data, so it checks shapes before touching them;
+ * the schema and structure checks run afterwards on the result.
  */
 function migrate(input: unknown): { ok: true; value: unknown } | { ok: false; error: string } {
   if (typeof input !== 'object' || input === null) {
@@ -66,5 +67,47 @@ function migrate(input: unknown): { ok: true; value: unknown } | { ok: false; er
       error: `schemaVersion ${version} is newer than this app supports (${CURRENT_SCHEMA_VERSION})`,
     };
   }
-  return { ok: true, value: input };
+  let value = input as Record<string, unknown>;
+  if (version < 2) value = upgradeToV2(value);
+  return { ok: true, value };
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+/**
+ * Version 2 adds the starter weight, line-height and shadow tokens, and the
+ * card's elevation prop. Missing starter tokens are filled in; values the
+ * person already has are kept.
+ */
+function upgradeToV2(input: Record<string, unknown>): Record<string, unknown> {
+  const value = structuredClone(input);
+  if (Array.isArray(value.designSystems)) {
+    for (const system of value.designSystems) {
+      if (isRecord(system) && isRecord(system.tokens)) fillMissing(system.tokens, defaultTokens);
+    }
+  }
+  if (Array.isArray(value.pages)) {
+    for (const page of value.pages) {
+      if (!isRecord(page) || !isRecord(page.nodes)) continue;
+      for (const node of Object.values(page.nodes)) {
+        if (isRecord(node) && node.type === 'card' && isRecord(node.props)) {
+          node.props.elevation ??= 'none';
+        }
+      }
+    }
+  }
+  value.schemaVersion = 2;
+  return value;
+}
+
+function fillMissing(target: Record<string, unknown>, defaults: TokenGroup) {
+  for (const [key, fallback] of Object.entries(defaults)) {
+    const current = target[key];
+    if (current === undefined) {
+      target[key] = structuredClone(fallback);
+    } else if (isRecord(current) && !('$value' in current) && !('$value' in fallback)) {
+      fillMissing(current, fallback as TokenGroup);
+    }
+  }
 }

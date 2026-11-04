@@ -272,7 +272,7 @@ export function SwitchRender({ props, state }: RenderProps) {
 export function CardRender({ props }: RenderProps) {
   const p = props as Props<typeof cardSchema>;
   return (
-    <section className="uc-card" data-padding={p.padding}>
+    <section className="uc-card" data-padding={p.padding} data-elevation={p.elevation}>
       <h3 className="uc-card__title">{p.title}</h3>
       {p.body ? <p className="uc-card__body">{p.body}</p> : null}
     </section>
